@@ -244,6 +244,174 @@ function checkForNewDay() {
     }
 }
 
+// Surprise Me Functionality
+function initSurpriseMe() {
+    const surpriseInput = document.getElementById('surpriseInput');
+    const surpriseBtn = document.getElementById('surpriseBtn');
+    const surprisePopup = document.getElementById('surprisePopup');
+    const surpriseImage = document.getElementById('surpriseImage');
+    const surpriseClose = document.getElementById('surpriseClose');
+    const surpriseTitle = document.getElementById('surpriseTitle');
+    const surpriseDescription = document.getElementById('surpriseDescription');
+    
+    if (!surpriseInput || !surpriseBtn || !surprisePopup) return;
+    
+    // Fallback images for when API is unavailable
+    const fallbackSurpriseImages = {
+        nature: [
+            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
+            'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800',
+            'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800'
+        ],
+        adventure: [
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+            'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800',
+            'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800'
+        ],
+        extreme: [
+            'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800',
+            'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800',
+            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
+        ],
+        default: [
+            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+            'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800'
+        ]
+    };
+    
+    // Get random image from Unsplash based on query
+    async function fetchSurpriseImage(query) {
+        // If no query, use a random nature image
+        if (!query || query.trim() === '') {
+            query = 'nature';
+        }
+        
+        const queryLower = query.toLowerCase();
+        
+        // Use fallback if no Unsplash API key
+        if (!CONFIG.api.accessKey || CONFIG.api.accessKey === 'YOUR_UNSPLASH_ACCESS_KEY') {
+            console.warn('Using fallback images for Surprise Me');
+            
+            // Try to match query with fallback categories
+            let images = fallbackSurpriseImages.default;
+            if (queryLower.includes('nature') || queryLower.includes('forest') || queryLower.includes('mountain')) {
+                images = fallbackSurpriseImages.nature;
+            } else if (queryLower.includes('adventure') || queryLower.includes('hike') || queryLower.includes('travel')) {
+                images = fallbackSurpriseImages.adventure;
+            } else if (queryLower.includes('extreme') || queryLower.includes('sport') || queryLower.includes('surf')) {
+                images = fallbackSurpriseImages.extreme;
+            }
+            
+            return images[Math.floor(Math.random() * images.length)];
+        }
+        
+        try {
+            // Use Unsplash API to search for random image
+            const response = await fetch(
+                `${CONFIG.api.baseUrl}/search/photos?query=${encodeURIComponent(query)}&per_page=1&client_id=${CONFIG.api.accessKey}`
+            );
+            
+            if (!response.ok) {
+                throw new Error(`Unsplash API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            if (data.results && data.results.length > 0) {
+                return data.results[0].urls.regular;
+            }
+            
+            // If no results, try a broader search
+            const broadResponse = await fetch(
+                `${CONFIG.api.baseUrl}/search/photos?query=nature&per_page=1&client_id=${CONFIG.api.accessKey}`
+            );
+            const broadData = await broadResponse.json();
+            return broadData.results?.[0]?.urls?.regular || fallbackSurpriseImages.default[0];
+            
+        } catch (error) {
+            console.error('Error fetching surprise image:', error);
+            return fallbackSurpriseImages.default[Math.floor(Math.random() * fallbackSurpriseImages.default.length)];
+        }
+    }
+    
+    // Close popup
+    function closeSurprisePopup() {
+        surprisePopup.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Close on X button
+    surpriseClose.addEventListener('click', closeSurprisePopup);
+    
+    // Close on background click
+    surprisePopup.addEventListener('click', (e) => {
+        if (e.target === surprisePopup) {
+            closeSurprisePopup();
+        }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeSurprisePopup();
+        }
+    });
+    
+    // Handle Surprise Me button click
+    surpriseBtn.addEventListener('click', async () => {
+        const query = surpriseInput.value.trim();
+        
+        if (!query) {
+            surpriseInput.placeholder = 'Please enter a topic...';
+            surpriseInput.style.borderColor = '#dc3545';
+            setTimeout(() => {
+                surpriseInput.placeholder = 'e.g., mountains, ocean, forest, wildlife...';
+                surpriseInput.style.borderColor = '';
+            }, 2000);
+            return;
+        }
+        
+        // Show loading state
+        surpriseBtn.disabled = true;
+        surpriseBtn.textContent = 'Loading...';
+        surpriseInput.disabled = true;
+        
+        try {
+            const imageUrl = await fetchSurpriseImage(query);
+            
+            // Set popup content
+            surpriseImage.src = imageUrl;
+            surpriseImage.alt = `Surprise image about ${query}`;
+            surpriseTitle.textContent = `Here's your ${query}!`;
+            surpriseDescription.textContent = `A random image about "${query}"`;
+            
+            // Show popup
+            surprisePopup.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+        } catch (error) {
+            console.error('Error loading surprise image:', error);
+            surpriseTitle.textContent = 'Oops!';
+            surpriseDescription.textContent = 'Could not load an image. Please try again.';
+            surprisePopup.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } finally {
+            // Reset button
+            surpriseBtn.disabled = false;
+            surpriseBtn.textContent = 'Surprise Me';
+            surpriseInput.disabled = false;
+            surpriseInput.focus();
+        }
+    });
+    
+    // Allow pressing Enter in the input field
+    surpriseInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            surpriseBtn.click();
+        }
+    });
+}
+
 // Sidebar toggle functionality
 function initSidebar() {
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -255,7 +423,8 @@ function initSidebar() {
         sidebarToggle.classList.remove('open');
         
         // Toggle sidebar on button click
-        sidebarToggle.addEventListener('click', () => {
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
             sidebarToggle.classList.toggle('open');
             sidebar.classList.toggle('open');
         });
@@ -266,6 +435,11 @@ function initSidebar() {
                 sidebar.classList.remove('open');
                 sidebarToggle.classList.remove('open');
             }
+        });
+        
+        // Prevent clicks inside sidebar from closing it
+        sidebar.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
     }
     
@@ -282,10 +456,97 @@ function initSidebar() {
     });
 }
 
+// Image Popup Functionality
+function initImagePopup() {
+    const popup = document.getElementById('imagePopup');
+    const popupImage = document.getElementById('popupImage');
+    const popupClose = document.getElementById('popupClose');
+    const popupAnimation = document.getElementById('popupAnimation');
+    const popupTitle = document.getElementById('popupTitle');
+    const popupDescription = document.getElementById('popupDescription');
+    
+    if (!popup || !popupImage || !popupClose) return;
+    
+    // Close popup
+    function closePopup() {
+        popup.classList.remove('active');
+        popupAnimation.className = 'popup-animation';
+        document.body.style.overflow = '';
+    }
+    
+    popupClose.addEventListener('click', closePopup);
+    
+    // Close on background click
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            closePopup();
+        }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closePopup();
+        }
+    });
+    
+    // Click handler for gallery items
+    document.getElementById('gallery')?.addEventListener('click', (e) => {
+        const galleryItem = e.target.closest('.gallery-item');
+        if (!galleryItem) return;
+        
+        const img = galleryItem.querySelector('img');
+        const category = galleryItem.querySelector('.category')?.textContent || 'default';
+        const photographer = galleryItem.querySelector('.photographer')?.textContent || '';
+        
+        if (img) {
+            // Set popup content
+            popupImage.src = img.src;
+            popupImage.alt = img.alt;
+            
+            // Set animation based on category
+            popupAnimation.className = 'popup-animation';
+            const categoryLower = category.toLowerCase();
+            
+            if (categoryLower.includes('nature')) {
+                popupAnimation.classList.add('nature');
+                popupTitle.textContent = 'Nature in Motion';
+                popupDescription.textContent = 'Experience the beauty of nature coming to life';
+            } else if (categoryLower.includes('adventure')) {
+                popupAnimation.classList.add('adventure');
+                popupTitle.textContent = 'Adventure Awaits';
+                popupDescription.textContent = 'Feel the thrill of exploration and discovery';
+            } else if (categoryLower.includes('extreme')) {
+                popupAnimation.classList.add('extreme');
+                popupTitle.textContent = 'Extreme Action';
+                popupDescription.textContent = 'Witness the intensity of extreme sports';
+            } else {
+                popupAnimation.classList.add('default');
+                popupTitle.textContent = 'Image Animation';
+                popupDescription.textContent = 'Watch the animation for 5 seconds';
+            }
+            
+            // Add photographer info if available
+            if (photographer) {
+                popupDescription.textContent += ` - ${photographer}`;
+            }
+            
+            // Show popup
+            popup.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Auto-close after 5 seconds
+            setTimeout(closePopup, 5000);
+        }
+    });
+}
+
 // Initialize the gallery when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     initGallery();
     initSidebar();
+    initImagePopup();
+    initSurpriseMe();
     
     // Check for new day every hour
     setInterval(checkForNewDay, 60 * 60 * 1000);
