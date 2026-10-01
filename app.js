@@ -256,142 +256,19 @@ function initSurpriseMe() {
     
     if (!surpriseInput || !surpriseBtn || !surprisePopup) return;
     
-    // Expanded fallback images organized by specific keywords for better matching
-    const fallbackSurpriseImages = {
-        // Nature categories
-        ocean: [
-            'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
-            'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800',
-            'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800'
-        ],
-        sea: [
-            'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
-            'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800'
-        ],
-        beach: [
-            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
-            'https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?w=800'
-        ],
-        mountain: [
-            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-            'https://images.unsplash.com/photo-1464822759844-d150baec93d5?w=800'
-        ],
-        forest: [
-            'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800',
-            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800'
-        ],
-        nature: [
-            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
-            'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800',
-            'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800'
-        ],
-        // Adventure categories
-        adventure: [
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-            'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800',
-            'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800'
-        ],
-        hike: [
-            'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800',
-            'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800'
-        ],
-        travel: [
-            'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800',
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'
-        ],
-        // Extreme sports
-        extreme: [
-            'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800',
-            'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800',
-            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
-        ],
-        surf: [
-            'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800',
-            'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800'
-        ],
-        ski: [
-            'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800',
-            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
-        ],
-        // Animals
-        animal: [
-            'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=800',
-            'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=800'
-        ],
-        wildlife: [
-            'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=800',
-            'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=800'
-        ],
-        // Weather and sky
-        sunset: [
-            'https://images.unsplash.com/photo-1509909756405-be0199881695?w=800',
-            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'
-        ],
-        sunrise: [
-            'https://images.unsplash.com/photo-1509909756405-be0199881695?w=800',
-            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800'
-        ],
-        // Generic fallback
-        default: [
-            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-            'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800'
-        ]
-    };
+    // Generic fallback images that can be used for any query
+    const genericFallbackImages = [
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
+        'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800',
+        'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800',
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+        'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800',
+        'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800',
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800',
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
+    ];
     
-    // Improved keyword matching function
-    function getMatchingImages(query) {
-        const queryLower = query.toLowerCase().trim();
-        
-        // Direct keyword matching
-        const keywordMap = {
-            'ocean': 'ocean',
-            'sea': 'sea',
-            'beach': 'beach',
-            'mountain': 'mountain',
-            'mountains': 'mountain',
-            'forest': 'forest',
-            'nature': 'nature',
-            'landscape': 'nature',
-            'adventure': 'adventure',
-            'hike': 'hike',
-            'hiking': 'hike',
-            'travel': 'travel',
-            'extreme': 'extreme',
-            'surf': 'surf',
-            'surfing': 'surf',
-            'ski': 'ski',
-            'skiing': 'ski',
-            'animal': 'animal',
-            'animals': 'animal',
-            'wildlife': 'wildlife',
-            'sunset': 'sunset',
-            'sunrise': 'sunrise'
-        };
-        
-        // Check for exact match
-        if (keywordMap[queryLower]) {
-            const category = keywordMap[queryLower];
-            if (fallbackSurpriseImages[category]) {
-                return fallbackSurpriseImages[category];
-            }
-        }
-        
-        // Check for partial matches (e.g., "ocean view" should match "ocean")
-        for (const [keyword, category] of Object.entries(keywordMap)) {
-            if (queryLower.includes(keyword)) {
-                if (fallbackSurpriseImages[category]) {
-                    return fallbackSurpriseImages[category];
-                }
-            }
-        }
-        
-        // Return default images
-        return fallbackSurpriseImages.default;
-    }
-    
-    // Get random image from Unsplash based on query
+    // Get random image from Unsplash based on ANY query
     async function fetchSurpriseImage(query) {
         // If no query, use a random nature image
         if (!query || query.trim() === '') {
@@ -401,9 +278,10 @@ function initSurpriseMe() {
         // Always try Unsplash API first if access key is available
         if (CONFIG.api.accessKey && CONFIG.api.accessKey !== 'YOUR_UNSPLASH_ACCESS_KEY') {
             try {
-                // Use Unsplash API to search for images based on the exact query
+                // Use Unsplash API to search for images based on the exact user query
+                // Fetch 30 images to have a good selection
                 const response = await fetch(
-                    `${CONFIG.api.baseUrl}/search/photos?query=${encodeURIComponent(query)}&per_page=20&client_id=${CONFIG.api.accessKey}`
+                    `${CONFIG.api.baseUrl}/search/photos?query=${encodeURIComponent(query)}&per_page=30&client_id=${CONFIG.api.accessKey}`
                 );
                 
                 if (!response.ok) {
@@ -417,24 +295,14 @@ function initSurpriseMe() {
                     return data.results[randomIndex].urls.regular;
                 }
                 
-                // If no results for specific query, try a broader search
-                const broadResponse = await fetch(
-                    `${CONFIG.api.baseUrl}/search/photos?query=${encodeURIComponent(query)}&per_page=20&client_id=${CONFIG.api.accessKey}`
-                );
-                const broadData = await broadResponse.json();
-                if (broadData.results && broadData.results.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * broadData.results.length);
-                    return broadData.results[randomIndex].urls.regular;
-                }
-                
             } catch (error) {
                 console.error('Error fetching from Unsplash API:', error);
             }
         }
         
-        // Use improved fallback matching
-        const matchingImages = getMatchingImages(query);
-        return matchingImages[Math.floor(Math.random() * matchingImages.length)];
+        // If API is not available or no results, use a random generic fallback image
+        // This ensures ANY text input will return an image
+        return genericFallbackImages[Math.floor(Math.random() * genericFallbackImages.length)];
     }
     
     // Close popup
