@@ -1036,3 +1036,74 @@ footer a {
     color: rgba(255, 255, 255, 0.9);
     font-style: italic;
 }
+
+/* Daily Train Commute Story Section */
+.story-section {
+    padding: 1.5rem 1rem;
+    background: var(--mint);
+    margin-top: 1rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--sea-green);
+}
+
+.story-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.story-container h2 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.story-container > p {
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+}
+
+.story-content {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+#storyTitle {
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 2px solid var(--sand);
+    padding-bottom: 0.5rem;
+}
+
+#storyCharacter {
+    color: var(--teal);
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+#storyText {
+    color: var(--dark);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+#storyDate {
+    color: var(--gray);
+    font-size: 0.85rem;
+    text-align: center;
+    font-style: italic;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-light);
+}
