@@ -551,17 +551,7 @@ function displayRandomQuote() {
 }
 
 // Initialize the gallery when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    initGallery();
-    initSidebar();
-    initImagePopup();
-    initSurpriseMe();
-    displayRandomQuote();
-    displayDailyStory();
-    
-    // Check for new day every hour
-    setInterval(checkForNewDay, 60 * 60 * 1000);
-});
+
 
 // Daily Train Commute Stories - 365 unique stories, one for each day of the year
 const trainStories = [
@@ -595,6 +585,7 @@ const trainStories = [
 ];
 
 // Generate 365 stories - combining hand-written stories with algorithmic generation
+
 function generateFullYearStories() {
     const baseStories = trainStories.slice();
     const allStories = [];
@@ -636,6 +627,20 @@ function getStorySeed() {
 /**
  * Display a new train commute story every day
  */
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    initGallery();
+    initSidebar();
+    initImagePopup();
+    initSurpriseMe();
+    displayRandomQuote();
+    displayDailyStory();
+    
+    // Check for new day every hour
+    setInterval(checkForNewDay, 60 * 60 * 1000);
+})
+
 function displayDailyStory() {
     const storyTitleElement = document.getElementById('storyTitle');
     const storyCharacterElement = document.getElementById('storyCharacter');
