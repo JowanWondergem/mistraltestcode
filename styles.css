@@ -43,9 +43,9 @@
     --transition: all 0.2s ease-in-out;
     --transition-slow: all 0.3s ease-in-out;
     
-    /* Typography - Modern Font Stack */
-    --font-primary: 'Lato', sans-serif;
-    --font-secondary: 'Inter', sans-serif;
+    /* Typography */
+    --font-heading: 'Lato', sans-serif;
+    --font-body: 'Inter', sans-serif;
     --font-size-base: 1rem;
     --line-height-base: 1.6;
 }
@@ -55,7 +55,7 @@ html {
 }
 
 body {
-    font-family: var(--font-secondary);
+    font-family: var(--font-body);
     font-size: var(--font-size-base);
     font-weight: 400;
     line-height: var(--line-height-base);
@@ -65,19 +65,19 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography */
+/* Typography - Headings use Lato, everything else inherits Inter from body */
 h1, h2, h3, h4, h5, h6 {
     margin-bottom: 0.5rem;
     font-weight: 700;
     line-height: 1.2;
     color: var(--navy);
-    font-family: var(--font-primary);
+    font-family: var(--font-heading);
 }
 
 h1 { 
     font-size: calc(1.325rem + 1.9vw); 
     font-weight: 300;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
 }
 h2 { 
     font-size: calc(1.275rem + 0.9vw); 
@@ -92,14 +92,12 @@ h4 { font-size: 1.2rem; }
 p {
     margin-bottom: 1rem;
     color: var(--dark);
-    font-family: var(--font-secondary);
 }
 
 a {
     color: var(--primary);
     text-decoration: none;
     transition: var(--transition);
-    font-family: var(--font-secondary);
 }
 
 a:hover {
@@ -122,7 +120,6 @@ a:hover {
     border-radius: var(--border-radius);
     transition: var(--transition);
     cursor: pointer;
-    font-family: var(--font-primary);
 }
 
 .btn-primary {
@@ -244,7 +241,6 @@ a:hover {
     z-index: 1040;
     padding-top: 60px;
     box-shadow: 2px 0 10px rgba(34, 46, 80, 0.3);
-    font-family: var(--font-primary);
 }
 
 .sidebar.open {
@@ -267,8 +263,6 @@ a:hover {
     color: var(--gray);
     transition: var(--transition);
     font-size: 0.95rem;
-    font-family: var(--font-primary);
-    font-weight: 400;
 }
 
 .sidebar-menu a:hover {
@@ -325,18 +319,14 @@ header h1 {
     color: var(--white);
     margin-bottom: 0.75rem;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    font-family: var(--font-primary);
     font-weight: 300;
     letter-spacing: -0.03em;
-    font-size: 2.5rem;
 }
 
 header p {
     opacity: 0.95;
     margin-bottom: 0;
     font-size: 1.1rem;
-    font-family: var(--font-secondary);
-    font-weight: 400;
 }
 
 /* Gallery Grid */
@@ -397,13 +387,11 @@ header p {
     font-weight: 600;
     margin-bottom: 0.25rem;
     color: var(--accent);
-    font-family: var(--font-primary);
 }
 
 .gallery-item .photographer {
     font-size: 0.75rem;
     opacity: 0.9;
-    font-family: var(--font-secondary);
 }
 
 /* Loading */
@@ -412,7 +400,6 @@ header p {
     font-size: 1.1rem;
     color: var(--gray);
     padding: 2rem;
-    font-family: var(--font-secondary);
 }
 
 /* Footer */
@@ -424,7 +411,6 @@ footer {
     margin-top: auto;
     border-top: 1px solid var(--mint);
     background: var(--light);
-    font-family: var(--font-secondary);
 }
 
 footer a {
@@ -452,7 +438,6 @@ footer a {
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--primary);
-    font-family: var(--font-primary);
     font-weight: 700;
 }
 
@@ -464,7 +449,6 @@ footer a {
 
 .instructions-list li {
     margin-bottom: 0.5rem;
-    font-family: var(--font-secondary);
 }
 
 .categories-grid {
@@ -491,14 +475,12 @@ footer a {
 .category-card h3 {
     margin-bottom: 0.5rem;
     color: var(--navy);
-    font-family: var(--font-primary);
     font-weight: 700;
 }
 
 .category-card p {
     font-size: 0.875rem;
     color: var(--secondary);
-    font-family: var(--font-secondary);
 }
 
 .contact-cards {
@@ -530,7 +512,6 @@ footer a {
 .contact-card h3 {
     margin-bottom: 0.5rem;
     color: var(--navy);
-    font-family: var(--font-primary);
     font-weight: 700;
 }
 
@@ -538,13 +519,11 @@ footer a {
     font-size: 0.875rem;
     color: var(--secondary);
     margin-bottom: 0.25rem;
-    font-family: var(--font-secondary);
 }
 
 .contact-card a {
     color: var(--primary);
     font-weight: 500;
-    font-family: var(--font-primary);
 }
 
 /* FAQ */
@@ -562,7 +541,6 @@ footer a {
     color: var(--primary);
     margin-bottom: 0.5rem;
     font-size: 1rem;
-    font-family: var(--font-primary);
     font-weight: 700;
 }
 
@@ -570,7 +548,6 @@ footer a {
     color: var(--navy);
     line-height: 1.6;
     margin-bottom: 0;
-    font-family: var(--font-secondary);
 }
 
 /* Social Links */
@@ -578,7 +555,6 @@ footer a {
 .social-links p { 
     margin-bottom: 1rem; 
     color: var(--navy); 
-    font-family: var(--font-secondary);
 }
 
 .social-icons {
@@ -596,7 +572,6 @@ footer a {
     font-weight: 600;
     transition: var(--transition);
     color: var(--navy);
-    font-family: var(--font-primary);
 }
 
 .social-icon:hover {
@@ -628,7 +603,6 @@ footer a {
     margin-bottom: 0.5rem;
     font-weight: 600;
     color: var(--navy);
-    font-family: var(--font-primary);
 }
 
 .form-group input {
@@ -639,7 +613,6 @@ footer a {
     font-size: 0.95rem;
     transition: var(--transition);
     background: var(--white);
-    font-family: var(--font-secondary);
 }
 
 .form-group input:focus {
@@ -659,7 +632,6 @@ footer a {
     transition: var(--transition);
     width: 100%;
     font-weight: 600;
-    font-family: var(--font-primary);
 }
 
 .submit-btn:hover {
@@ -672,7 +644,6 @@ footer a {
     font-style: italic;
     text-align: center;
     margin-top: 0.75rem;
-    font-family: var(--font-secondary);
 }
 
 /* Surprise Me Section */
@@ -695,14 +666,12 @@ footer a {
     color: var(--primary);
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
-    font-family: var(--font-primary);
     font-weight: 700;
 }
 
 .surprise-container > p {
     color: var(--secondary);
     margin-bottom: 1.5rem;
-    font-family: var(--font-secondary);
 }
 
 .surprise-input-group {
@@ -720,7 +689,6 @@ footer a {
     font-size: 1rem;
     transition: var(--transition);
     background: var(--white);
-    font-family: var(--font-secondary);
 }
 
 .surprise-input-group input:focus {
@@ -732,13 +700,11 @@ footer a {
 .surprise-input-group input::placeholder {
     color: var(--gray);
     opacity: 0.7;
-    font-family: var(--font-secondary);
 }
 
 #surpriseBtn {
     min-width: 120px;
     font-weight: 700;
-    font-family: var(--font-primary);
 }
 
 /* Image Popup Modal */
@@ -813,14 +779,12 @@ footer a {
     color: var(--accent);
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
-    font-family: var(--font-primary);
     font-weight: 700;
 }
 
 .popup-info p {
     color: var(--mint);
     opacity: 0.95;
-    font-family: var(--font-secondary);
 }
 
 /* Surprise Popup */
@@ -899,14 +863,12 @@ footer a {
     color: var(--accent);
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
-    font-family: var(--font-primary);
     font-weight: 700;
 }
 
 #surpriseDescription {
     color: var(--mint);
     opacity: 0.95;
-    font-family: var(--font-secondary);
 }
 
 /* Animation Keyframes */
