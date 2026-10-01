@@ -7,20 +7,35 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Nature, Adventure & Extreme Sports</h1>
-        <p>Daily changing gallery - Refresh every day for new images!</p>
-    </header>
+    <div class="sidebar-container">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+            <span class="hamburger"></span>
+        </button>
+        <nav class="sidebar" id="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="how-to.html">How To</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
     
-    <main>
-        <div class="gallery-grid" id="gallery"></div>
-        <div class="loading">Loading images...</div>
-    </main>
-    
-    <footer>
-        <p>Images provided by <a href="https://unsplash.com" target="_blank">Unsplash</a></p>
-        <p>Last updated: <span id="last-updated"></span></p>
-    </footer>
+    <div class="main-content">
+        <header>
+            <h1>Nature, Adventure & Extreme Sports</h1>
+            <p>Daily changing gallery - Refresh every day for new images!</p>
+        </header>
+        
+        <main>
+            <div class="gallery-grid" id="gallery"></div>
+            <div class="loading">Loading images...</div>
+        </main>
+        
+        <footer>
+            <p>Images provided by <a href="https://unsplash.com" target="_blank">Unsplash</a></p>
+            <p>Last updated: <span id="last-updated"></span></p>
+        </footer>
+    </div>
     
     <script src="app.js"></script>
 </body>

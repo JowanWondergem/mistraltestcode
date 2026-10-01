@@ -244,9 +244,48 @@ function checkForNewDay() {
     }
 }
 
+// Sidebar toggle functionality
+function initSidebar() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebarToggle && sidebar) {
+        // Start with sidebar collapsed
+        sidebar.classList.remove('open');
+        sidebarToggle.classList.remove('open');
+        
+        // Toggle sidebar on button click
+        sidebarToggle.addEventListener('click', () => {
+            sidebarToggle.classList.toggle('open');
+            sidebar.classList.toggle('open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+                sidebarToggle.classList.remove('open');
+            }
+        });
+    }
+    
+    // Highlight active menu item
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const menuLinks = document.querySelectorAll('.sidebar-menu a');
+    menuLinks.forEach(link => {
+        const linkPage = link.getAttribute('href');
+        if (linkPage === currentPage) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
 // Initialize the gallery when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     initGallery();
+    initSidebar();
     
     // Check for new day every hour
     setInterval(checkForNewDay, 60 * 60 * 1000);
