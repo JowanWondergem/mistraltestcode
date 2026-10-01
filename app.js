@@ -512,12 +512,51 @@ function initImagePopup() {
     });
 }
 
+// BrainyQuote weird quotes collection
+const weirdQuotes = [
+    { quote: "Reality is merely an illusion, albeit a very persistent one.", author: "Albert Einstein" },
+    { quote: "I used to be a baker, but I couldn't make enough dough.", author: "Unknown" },
+    { quote: "I told my wife she was drawing her eyebrows too high. She looked surprised.", author: "Unknown" },
+    { quote: "I'm reading a book about anti-gravity. It's impossible to put down.", author: "Unknown" },
+    { quote: "I used to play piano by ear, but now I use my hands.", author: "Unknown" },
+    { quote: "Why don't scientists trust atoms? Because they make up everything.", author: "Unknown" },
+    { quote: "I told my doctor I broke my arm in two places. He told me to stop going to those places.", author: "Henny Youngman" },
+    { quote: "Time flies like an arrow. Fruit flies like a banana.", author: "Groucho Marx" },
+    { quote: "I am not young enough to know everything.", author: "Oscar Wilde" },
+    { quote: "Always remember that you are absolutely unique. Just like everyone else.", author: "Margaret Mead" },
+    { quote: "I can resist everything except temptation.", author: "Oscar Wilde" },
+    { quote: "The only way to get rid of a temptation is to yield to it.", author: "Oscar Wilde" },
+    { quote: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison" },
+    { quote: "If you think you are too small to make a difference, try sleeping with a mosquito.", author: "Dalai Lama" },
+    { quote: "The early bird gets the worm, but the second mouse gets the cheese.", author: "Steven Wright" },
+    { quote: "I used to be indecisive. Now I'm not so sure.", author: "Unknown" },
+    { quote: "What's the use of happiness? It can't buy you money.", author: "Henry Youngman" },
+    { quote: "The more I see of men, the more I like dogs.", author: "Madame de Staël" },
+    { quote: "I never forget a face, but in your case I'll be glad to make an exception.", author: "Groucho Marx" },
+    { quote: "A day without sunshine is like, you know, night.", author: "Steve Martin" },
+    { quote: "I am free of all prejudice. I hate everyone equally.", author: "W.C. Fields" }
+];
+
+/**
+ * Display a random weird quote from BrainyQuote
+ */
+function displayRandomQuote() {
+    const quoteElement = document.getElementById('randomQuote');
+    const authorElement = document.getElementById('quoteAuthor');
+    if (!quoteElement || !authorElement) return;
+    const randomIndex = Math.floor(Math.random() * weirdQuotes.length);
+    const { quote, author } = weirdQuotes[randomIndex];
+    quoteElement.textContent = `"${quote}"`;
+    authorElement.textContent = `— ${author}`;
+}
+
 // Initialize the gallery when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     initGallery();
     initSidebar();
     initImagePopup();
     initSurpriseMe();
+    displayRandomQuote();
     
     // Check for new day every hour
     setInterval(checkForNewDay, 60 * 60 * 1000);
