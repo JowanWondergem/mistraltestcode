@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nature & Adventure Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -29,7 +32,50 @@
         <main>
             <div class="gallery-grid" id="gallery"></div>
             <div class="loading">Loading images...</div>
+            
+            <!-- Surprise Me Section -->
+            <section class="surprise-section">
+                <div class="surprise-container">
+                    <h2>Discover More</h2>
+                    <p>Enter any topic and let us surprise you with a random image!</p>
+                    <div class="surprise-input-group">
+                        <input 
+                            type="text" 
+                            id="surpriseInput" 
+                            placeholder="e.g., mountains, ocean, forest, wildlife..."
+                            autocomplete="off"
+                        >
+                        <button class="btn btn-accent" id="surpriseBtn">Surprise Me</button>
+                    </div>
+                </div>
+            </section>
         </main>
+        
+        <!-- Image Popup Modal -->
+        <div class="popup-modal" id="imagePopup">
+            <button class="popup-close" id="popupClose">&times;</button>
+            <div class="popup-content">
+                <img id="popupImage" alt="Full size image">
+                <div class="popup-animation" id="popupAnimation"></div>
+                <div class="popup-info">
+                    <h3 id="popupTitle">Image Animation</h3>
+                    <p id="popupDescription">Watch the animation for 5 seconds...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Surprise Image Popup -->
+        <div class="surprise-popup" id="surprisePopup">
+            <button class="popup-close" id="surpriseClose">&times;</button>
+            <div class="surprise-content">
+                <img id="surpriseImage" alt="Surprise image">
+                <div class="surprise-overlay"></div>
+                <div class="surprise-info">
+                    <h3 id="surpriseTitle">Here's your surprise!</h3>
+                    <p id="surpriseDescription">Enjoy this random image about your topic</p>
+                </div>
+            </div>
+        </div>
         
         <footer>
             <p>Images provided by <a href="https://unsplash.com" target="_blank">Unsplash</a></p>
