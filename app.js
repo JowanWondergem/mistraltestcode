@@ -28,19 +28,26 @@ const CONFIG = {
     
     // Gallery settings
     gallery: {
-        itemsPerCategory: 4, // Number of images per category
-        totalItems: 12,     // Total images to display
+        totalItems: 1,     // Now only 1 image to display
         categories: ['nature', 'adventure', 'extreme']
     }
 };
 
 // DOM elements
-const galleryElement = document.getElementById('gallery');
+const singleImageContainer = document.getElementById('singleImageContainer');
+const singleImageElement = document.getElementById('singleImage');
+const pixelLoadingElement = document.getElementById('pixelLoading');
 const loadingElement = document.querySelector('.loading');
 const lastUpdatedElement = document.getElementById('last-updated');
+const singleImagePopup = document.getElementById('singleImagePopup');
+const popupSingleImage = document.getElementById('popupSingleImage');
+const singleImageClose = document.getElementById('singleImageClose');
+const popupSingleAnimation = document.getElementById('popupSingleAnimation');
+const popupSingleTitle = document.getElementById('popupSingleTitle');
+const popupSingleDescription = document.getElementById('popupSingleDescription');
 
 // State management
-let currentImages = [];
+let currentImage = null;
 let lastFetchDate = null;
 
 /**
@@ -114,117 +121,223 @@ function randomShuffle(array) {
 }
 
 /**
- * Fetch all images for the gallery - fetch fresh from Unsplash on each refresh
- * @returns {Promise<Array>} Array of all image data
+ * Get a random category from the available categories
+ * @returns {string} Random category
  */
-async function fetchAllImages() {
-    const allImages = [];
+function getRandomCategory() {
+    const categories = CONFIG.gallery.categories;
+    return categories[Math.floor(Math.random() * categories.length)];
+}
+
+/**
+ * Fetch a single random image for the gallery
+ * @returns {Promise<Object>} Single image data
+ */
+async function fetchSingleImage() {
+    // Select a random category
+    const category = getRandomCategory();
     
-    // Fetch more images from each category to get a wider selection
-    // Instead of 4 per category, fetch 20 to have more variety from Unsplash
-    const imagesPerFetch = 20;
+    // Fetch images for the selected category
+    const images = await fetchUnsplashImages(category, 30);
     
-    // Fetch images for each category
-    for (const category of CONFIG.gallery.categories) {
-        const images = await fetchUnsplashImages(category, imagesPerFetch);
-        allImages.push(...images);
+    // If we got images, select a random one
+    if (images.length > 0) {
+        const randomIndex = Math.floor(Math.random() * images.length);
+        currentImage = images[randomIndex];
+        currentImage.category = category; // Ensure category is set
+    } else {
+        // Fallback to a generic image
+        currentImage = {
+            url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
+            category: category,
+            photographer: 'Freestocks',
+            full: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200',
+            alt: `${category} photo`
+        };
     }
     
-    // Shuffle all images randomly for fresh selection on each refresh
-    const shuffledImages = randomShuffle(allImages);
-    
-    // Limit to the desired number of images
-    currentImages = shuffledImages.slice(0, CONFIG.gallery.totalItems);
     lastFetchDate = new Date().toDateString();
-    
-    return currentImages;
+    return currentImage;
 }
 
 /**
- * Create a gallery item element
- * @param {Object} image - Image data
- * @returns {HTMLElement} Gallery item element
+ * Create pixel explosion loading animation
  */
-function createGalleryItem(image) {
-    const item = document.createElement('div');
-    item.className = 'gallery-item fade-in';
+function createPixelExplosion() {
+    const container = pixelLoadingElement;
+    container.innerHTML = '';
     
-    const img = document.createElement('img');
-    img.src = image.url;
-    img.alt = image.alt || `${image.category} photo by ${image.photographer}`;
-    img.loading = 'lazy';
+    // Create 81 pixels in a 9x9 grid for the reversed explosion effect
+    const pixelCount = 81;
+    const size = 12;
+    const spacing = 20;
+    const startSize = 200;
     
-    const overlay = document.createElement('div');
-    overlay.className = 'overlay';
+    for (let i = 0; i < pixelCount; i++) {
+        const pixel = document.createElement('div');
+        pixel.className = `pixel n${i + 1}`;
+        
+        // Position pixels in a grid pattern that expands outward
+        const row = Math.floor(i / 9);
+        const col = i % 9;
+        const center = startSize / 2;
+        const x = center + (col - 4) * spacing;
+        const y = center + (row - 4) * spacing;
+        
+        pixel.style.top = `${y}px`;
+        pixel.style.left = `${x}px`;
+        
+        container.appendChild(pixel);
+    }
     
-    const category = document.createElement('div');
-    category.className = 'category';
-    category.textContent = image.category.charAt(0).toUpperCase() + image.category.slice(1);
-    
-    const photographer = document.createElement('div');
-    photographer.className = 'photographer';
-    photographer.textContent = `Photo: ${image.photographer}`;
-    
-    overlay.appendChild(category);
-    overlay.appendChild(photographer);
-    
-    item.appendChild(img);
-    item.appendChild(overlay);
-    
-    return item;
+    // Show the loading animation
+    container.classList.remove('hidden');
 }
 
 /**
- * Render the gallery with images
- * @param {Array} images - Array of image data
+ * Hide pixel explosion loading animation
  */
-function renderGallery(images) {
-    // Clear existing gallery
-    galleryElement.innerHTML = '';
+function hidePixelExplosion() {
+    if (pixelLoadingElement) {
+        pixelLoadingElement.classList.add('hidden');
+    }
+}
+
+/**
+ * Render the single image with loading animation
+ * @param {Object} image - Single image data
+ */
+function renderSingleImage(image) {
+    if (!singleImageElement || !singleImageContainer) return;
     
-    // Create and append gallery items
-    images.forEach(image => {
-        const item = createGalleryItem(image);
-        galleryElement.appendChild(item);
+    // Set the image source
+    singleImageElement.src = image.url;
+    singleImageElement.alt = image.alt || `${image.category} photo by ${image.photographer}`;
+    singleImageElement.loading = 'eager';
+    
+    // Show loading animation
+    createPixelExplosion();
+    
+    // When image loads, hide loading and show image
+    singleImageElement.onload = function() {
+        singleImageElement.classList.add('loaded');
+        hidePixelExplosion();
+        loadingElement.style.display = 'none';
+        lastUpdatedElement.textContent = new Date().toLocaleString();
+    };
+    
+    // Handle image load error
+    singleImageElement.onerror = function() {
+        // Use fallback image
+        singleImageElement.src = 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800';
+        singleImageElement.alt = 'Fallback nature photo';
+    };
+    
+    // Store the current image for popup
+    currentImage = image;
+}
+
+/**
+ * Initialize the single image gallery
+ */
+async function initSingleImage() {
+    try {
+        const image = await fetchSingleImage();
+        renderSingleImage(image);
+    } catch (error) {
+        console.error('Error initializing single image:', error);
+        loadingElement.textContent = 'Error loading image. Please try again later.';
+    }
+}
+
+/**
+ * Refresh the single image with a new random image
+ */
+function refreshSingleImage() {
+    // Force a fresh fetch
+    lastFetchDate = null;
+    currentImage = null;
+    loadingElement.style.display = 'block';
+    
+    // Clear the current image
+    if (singleImageElement) {
+        singleImageElement.classList.remove('loaded');
+    }
+    
+    initSingleImage();
+}
+
+/**
+ * Initialize single image click popup
+ */
+function initSingleImagePopup() {
+    if (!singleImageContainer || !singleImagePopup) return;
+    
+    // Close popup
+    function closeSingleImagePopup() {
+        singleImagePopup.classList.remove('active');
+        popupSingleAnimation.className = 'popup-animation';
+        document.body.style.overflow = '';
+    }
+    
+    singleImageClose.addEventListener('click', closeSingleImagePopup);
+    
+    // Close on background click
+    singleImagePopup.addEventListener('click', (e) => {
+        if (e.target === singleImagePopup) {
+            closeSingleImagePopup();
+        }
     });
     
-    // Hide loading indicator
-    loadingElement.style.display = 'none';
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeSingleImagePopup();
+        }
+    });
     
-    // Update last updated timestamp
-    lastUpdatedElement.textContent = new Date().toLocaleString();
-    
-    // Add fade-in animation to items
-    setTimeout(() => {
-        const items = document.querySelectorAll('.gallery-item');
-        items.forEach((item, index) => {
-            item.style.animationDelay = `${index * 0.1}s`;
-        });
-    }, 100);
-}
-
-/**
- * Initialize the gallery
- */
-async function initGallery() {
-    try {
-        const images = await fetchAllImages();
-        renderGallery(images);
-    } catch (error) {
-        console.error('Error initializing gallery:', error);
-        loadingElement.textContent = 'Error loading images. Please try again later.';
-    }
-}
-
-/**
- * Refresh the gallery with new random images
- */
-function refreshGallery() {
-    // Force a fresh fetch by clearing the cache
-    lastFetchDate = null;
-    currentImages = [];
-    loadingElement.style.display = 'block';
-    initGallery();
+    // Click handler for single image
+    singleImageContainer.addEventListener('click', (e) => {
+        if (!currentImage) return;
+        
+        // Set popup content
+        popupSingleImage.src = currentImage.url || currentImage.full || currentImage.src;
+        popupSingleImage.alt = currentImage.alt || `${currentImage.category} photo`;
+        
+        // Set animation based on category
+        popupSingleAnimation.className = 'popup-animation';
+        const categoryLower = (currentImage.category || '').toLowerCase();
+        
+        if (categoryLower.includes('nature')) {
+            popupSingleAnimation.classList.add('nature');
+            popupSingleTitle.textContent = 'Nature in Motion';
+            popupSingleDescription.textContent = 'Experience the beauty of nature coming to life';
+        } else if (categoryLower.includes('adventure')) {
+            popupSingleAnimation.classList.add('adventure');
+            popupSingleTitle.textContent = 'Adventure Awaits';
+            popupSingleDescription.textContent = 'Feel the thrill of exploration and discovery';
+        } else if (categoryLower.includes('extreme')) {
+            popupSingleAnimation.classList.add('extreme');
+            popupSingleTitle.textContent = 'Extreme Action';
+            popupSingleDescription.textContent = 'Witness the intensity of extreme sports';
+        } else {
+            popupSingleAnimation.classList.add('default');
+            popupSingleTitle.textContent = 'Image Animation';
+            popupSingleDescription.textContent = 'Watch the animation for 5 seconds';
+        }
+        
+        // Add photographer info if available
+        if (currentImage.photographer) {
+            popupSingleDescription.textContent += ` - Photo: ${currentImage.photographer}`;
+        }
+        
+        // Show popup
+        singleImagePopup.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Auto-close after 5 seconds
+        setTimeout(closeSingleImagePopup, 5000);
+    });
 }
 
 // Surprise Me Functionality
@@ -613,8 +726,9 @@ function getStorySeed() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    initGallery();
+    initSingleImage();
     initSidebar();
+    initSingleImagePopup();
     initImagePopup();
     initSurpriseMe();
     displayRandomQuote();
@@ -622,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Refresh gallery on page refresh - no daily caching
     // Check for new day every hour (kept for backward compatibility)
-    setInterval(refreshGallery, 60 * 60 * 1000);
+    setInterval(refreshSingleImage, 60 * 60 * 1000);
 })
 
 function displayDailyStory() {
@@ -652,6 +766,6 @@ function displayDailyStory() {
 // Also refresh when the page becomes visible again
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-        refreshGallery();
+        refreshSingleImage();
     }
 });

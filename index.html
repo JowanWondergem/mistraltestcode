@@ -32,8 +32,24 @@
         </header>
         
         <main>
-            <div class="gallery-grid" id="gallery"></div>
-            <div class="loading">Loading images...</div>
+            <div class="single-image-container" id="singleImageContainer">
+                <div class="pixel-explosion-loading" id="pixelLoading"></div>
+                <img id="singleImage" alt="Daily image">
+            </div>
+            <div class="loading">Loading image...</div>
+            
+            <!-- Single Image Click Popup -->
+            <div class="popup-modal" id="singleImagePopup">
+                <button class="popup-close" id="singleImageClose">&times;</button>
+                <div class="popup-content">
+                    <img id="popupSingleImage" alt="Full size image">
+                    <div class="popup-animation" id="popupSingleAnimation"></div>
+                    <div class="popup-info">
+                        <h3 id="popupSingleTitle">Image Animation</h3>
+                        <p id="popupSingleDescription">Watch the animation for 5 seconds...</p>
+                    </div>
+                </div>
+            </div>
             
             <!-- Surprise Me Section -->
             <section class="surprise-section">
