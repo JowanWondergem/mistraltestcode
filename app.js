@@ -98,31 +98,17 @@ function getFallbackImages(category, count) {
 }
 
 /**
- * Get a seed based on the current date for consistent daily images
- * @returns {number} Seed value
- */
-function getDailySeed() {
-    const today = new Date();
-    return today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-}
-
-/**
- * Shuffle array with a consistent seed for the same day
+ * Shuffle array randomly for fresh images on each refresh
  * @param {Array} array - Array to shuffle
- * @param {number} seed - Seed for randomization
  * @returns {Array} Shuffled array
  */
-function seededShuffle(array, seed) {
-    // Create a copy of the array
+function randomShuffle(array) {
     const arr = [...array];
-    
-    // Use the seed to create a pseudo-random sequence
-    let currentSeed = seed;
-    
-    return arr.sort(() => {
-        currentSeed = (currentSeed * 9301 + 49297) % 233280;
-        return (currentSeed / 233280) - 0.5;
-    });
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
 }
 
 /**
@@ -132,25 +118,18 @@ function seededShuffle(array, seed) {
 async function fetchAllImages() {
     const allImages = [];
     
-    // Check if we should use cached images from the same day
-    const today = new Date().toDateString();
-    if (lastFetchDate === today && currentImages.length > 0) {
-        return currentImages;
-    }
-    
     // Fetch images for each category
     for (const category of CONFIG.gallery.categories) {
         const images = await fetchUnsplashImages(category, CONFIG.gallery.itemsPerCategory);
         allImages.push(...images);
     }
     
-    // Shuffle all images with a consistent seed for the day
-    const dailySeed = getDailySeed();
-    const shuffledImages = seededShuffle(allImages, dailySeed);
+    // Shuffle all images randomly for fresh selection on each refresh
+    const shuffledImages = randomShuffle(allImages);
     
     // Limit to the desired number of images
     currentImages = shuffledImages.slice(0, CONFIG.gallery.totalItems);
-    lastFetchDate = today;
+    lastFetchDate = new Date().toDateString();
     
     return currentImages;
 }
@@ -232,16 +211,14 @@ async function initGallery() {
 }
 
 /**
- * Check if a new day has started and refresh images if needed
+ * Refresh the gallery with new random images
  */
-function checkForNewDay() {
-    const today = new Date().toDateString();
-    
-    if (lastFetchDate !== today) {
-        // New day detected, refresh the gallery
-        loadingElement.style.display = 'block';
-        initGallery();
-    }
+function refreshGallery() {
+    // Force a fresh fetch by clearing the cache
+    lastFetchDate = null;
+    currentImages = [];
+    loadingElement.style.display = 'block';
+    initGallery();
 }
 
 // Surprise Me Functionality
@@ -637,8 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
     displayRandomQuote();
     displayDailyStory();
     
-    // Check for new day every hour
-    setInterval(checkForNewDay, 60 * 60 * 1000);
+    // Refresh gallery on page refresh - no daily caching
+    // Check for new day every hour (kept for backward compatibility)
+    setInterval(refreshGallery, 60 * 60 * 1000);
 })
 
 function displayDailyStory() {
@@ -665,9 +643,9 @@ function displayDailyStory() {
     storyDateElement.textContent = `Today's commute: ${dateString}`;
 }
 
-// Also check when the page becomes visible again
+// Also refresh when the page becomes visible again
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-        checkForNewDay();
+        refreshGallery();
     }
 });
