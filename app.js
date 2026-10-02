@@ -57,8 +57,10 @@ async function fetchUnsplashImages(category, count = 4) {
     }
     
     try {
+        // Use a random page to get different images on each fetch
+        const randomPage = Math.floor(Math.random() * 100) + 1;
         const response = await fetch(
-            `${CONFIG.api.baseUrl}/search/photos?query=${category}&per_page=${count}&client_id=${CONFIG.api.accessKey}`
+            `${CONFIG.api.baseUrl}/search/photos?query=${category}&per_page=${count}&page=${randomPage}&client_id=${CONFIG.api.accessKey}`
         );
         
         if (!response.ok) {
@@ -112,15 +114,19 @@ function randomShuffle(array) {
 }
 
 /**
- * Fetch all images for the gallery
+ * Fetch all images for the gallery - fetch fresh from Unsplash on each refresh
  * @returns {Promise<Array>} Array of all image data
  */
 async function fetchAllImages() {
     const allImages = [];
     
+    // Fetch more images from each category to get a wider selection
+    // Instead of 4 per category, fetch 20 to have more variety from Unsplash
+    const imagesPerFetch = 20;
+    
     // Fetch images for each category
     for (const category of CONFIG.gallery.categories) {
-        const images = await fetchUnsplashImages(category, CONFIG.gallery.itemsPerCategory);
+        const images = await fetchUnsplashImages(category, imagesPerFetch);
         allImages.push(...images);
     }
     
